@@ -131,7 +131,7 @@
     document.addEventListener("DOMContentLoaded", function() {
         let visitCount = localStorage.getItem("js_visit_counter");
         if (visitCount === null) {
-            visitCount = 1; // 初始值
+            visitCount = 0; // 初始值
         } else {
             visitCount = parseInt(visitCount) + 1;
         }

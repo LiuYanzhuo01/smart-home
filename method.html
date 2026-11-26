@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>How It Works | Best Smart Home Security System & Camera</title>
-    <meta name="description" content="Learn how our home security camera system and smart lock work together. Discover why we are the best smart home security system for your needs.">
+    <title>Compatibility Checker & Features | Best Smart Home Security System</title>
+    <meta name="description" content="Check if your current devices (Apple, Google, Xiaomi, routers, Ring, etc.) are compatible with our best smart home security system.">
     <style>
         :root {
             --primary: #2563eb;
@@ -13,6 +13,9 @@
             --text: #334155;
             --bg: #f8fafc;
             --card-bg: #ffffff;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', 'Segoe UI', sans-serif; }
         body { background-color: var(--bg); color: var(--text); line-height: 1.7; }
@@ -21,64 +24,273 @@
         header h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
         header p { font-size: 1.1rem; opacity: 0.9; }
 
-        nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 1rem 2rem; display: flex; justify-content: center; gap: 3rem; position: sticky; top: 0; z-index: 100; }
-        nav a { text-decoration: none; color: var(--primary-dark); font-weight: 600; font-size: 1.05rem; padding: 0.5rem 0; position: relative; transition: color 0.3s; }
+        nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding: 1rem 2rem; display: flex; justify-content: center; gap: 2rem; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; }
+        nav a { text-decoration: none; color: var(--primary-dark); font-weight: 600; font-size: 1rem; padding: 0.5rem 0; position: relative; transition: color 0.3s; }
         nav a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px; background: var(--primary); transition: width 0.3s ease; border-radius: 3px; }
         nav a:hover::after, nav a.active::after { width: 100%; }
 
-        .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
 
-        /* 时间线设计 */
-        .timeline { position: relative; }
-        .timeline::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 4px; background: #e2e8f0; border-radius: 2px; }
+        /* 兼容性检查工具 */
+        .checker-box { background: var(--card-bg); border-radius: 16px; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-top: 5px solid var(--primary); margin-bottom: 3rem; }
+        .checker-box h2 { font-size: 1.5rem; color: var(--dark); margin-bottom: 0.5rem; }
+        .checker-box p { color: #64748b; margin-bottom: 2rem; }
 
-        .step { position: relative; padding-left: 70px; margin-bottom: 3rem; background: var(--card-bg); padding: 2rem 2rem 2rem 70px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s; border: 1px solid #f1f5f9; }
-        .step:hover { transform: translateX(5px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        /* 分类标题 */
+        .category-title { font-size: 0.9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin: 1.5rem 0 0.8rem; }
+        .category-title:first-of-type { margin-top: 0; }
 
-        /* 时间线圆点 */
-        .step::before { content: attr(data-step); position: absolute; left: 4px; top: 25px; width: 44px; height: 44px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; border: 4px solid var(--card-bg); box-shadow: 0 0 0 4px #e2e8f0; z-index: 1; }
+        /* 选项网格布局 */
+        .brand-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; }
+        .brand-btn { padding: 1rem; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; cursor: pointer; text-align: center; font-weight: 600; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; font-size: 0.9rem; color: var(--text); }
+        .brand-btn:hover { background: #f1f5f9; transform: translateY(-2px); border-color: #cbd5e1; }
+        .brand-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary-dark); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); }
 
-        .step h3 { font-size: 1.4rem; color: var(--dark); margin-bottom: 0.8rem; }
-        .step p { color: var(--text); font-size: 1.05rem; }
-        .step strong { color: var(--primary); }
+        /* 结果展示区 */
+        .result-display { background: #f8fafc; border-radius: 12px; padding: 1.5rem; border-left: 5px solid var(--primary); display: none; align-items: flex-start; gap: 1.5rem; margin-top: 2rem; }
+        .result-display.show { display: flex; animation: fadeIn 0.4s ease; }
 
-        footer { text-align: center; padding: 2.5rem; color: #64748b; border-top: 1px solid #e2e8f0; background: white; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .result-icon { font-size: 2rem; line-height: 1; }
+        .result-content { flex: 1; }
+        .result-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 0.3rem; }
+        .result-desc { font-size: 0.95rem; color: #475569; }
+
+        /* 状态颜色类 */
+        .res-success { border-left-color: var(--success); background: #f0fdf4; }
+        .res-success .result-title { color: #166534; }
+
+        .res-warning { border-left-color: var(--warning); background: #fffbeb; }
+        .res-warning .result-title { color: #b45309; }
+
+        .res-error { border-left-color: var(--error); background: #fef2f2; }
+        .res-error .result-title { color: #991b1b; }
+
+        /* 原有功能卡片 */
+        .section-title { font-size: 1.8rem; font-weight: 700; color: var(--dark); margin: 3rem 0 1.5rem; text-align: center; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .card { background: var(--card-bg); padding: 2.5rem 2rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center; border: 1px solid #f1f5f9; }
+        .card-icon { font-size: 2.5rem; margin-bottom: 1rem; display: inline-block; padding: 1rem; background: #eff6ff; border-radius: 50%; }
+        .card h3 { font-size: 1.2rem; color: var(--dark); margin-bottom: 0.5rem; }
+        .card p { color: var(--text); }
+
+        footer { text-align: center; padding: 2.5rem; color: #64748b; border-top: 1px solid #e2e8f0; background: white; margin-top: 3rem;}
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Features &amp; How It Works</h1>
-    <p>Simple setup, powerful protection for your smart home.</p>
+    <h1>System Compatibility Center</h1>
+    <p>Check if our devices integrate with your existing smart home setup.</p>
 </header>
 
 <nav>
     <a href="index.html">Overview</a>
-    <a href="method.html" class="active">Features</a>
+    <a href="method.html" class="active">Tools & Features</a>
+    <a href="simulator.html">AI Package Builder</a>
     <a href="results.html">Why Choose Us</a>
 </nav>
 
 <div class="container">
-    <div class="timeline">
-        <div class="step" data-step="1">
-            <h3>Easy Installation for Beginners</h3>
-            <p>Our <strong>smart home devices for beginners</strong> are designed for DIY setup. Mount your <strong>home security camera system</strong> in minutes without the need for professional help. No complex wiring required.</p>
+
+    <div class="checker-box">
+        <h2>🔍 Device Compatibility Checker</h2>
+        <p>Select any device or ecosystem you currently use to see if our <strong>best smart home security system</strong> works with it.</p>
+
+        <!-- 分类 1：语音助手 -->
+        <div class="category-title">1. Voice Assistants</div>
+        <div class="brand-options">
+            <div class="brand-btn" onclick="checkCompatibility('Apple', this)"><span>🍎</span> Apple HomeKit</div>
+            <div class="brand-btn" onclick="checkCompatibility('Google', this)"><span>🌐</span> Google Home</div>
+            <div class="brand-btn" onclick="checkCompatibility('Amazon', this)"><span>📦</span> Amazon Alexa</div>
+            <div class="brand-btn" onclick="checkCompatibility('Samsung', this)"><span>💠</span> Samsung SmartThings</div>
         </div>
 
-        <div class="step" data-step="2">
-            <h3>AI Learning &amp; Smart Lock Automation</h3>
-            <p>The system learns your daily routines automatically. You can customize alerts and automate your <strong>smart lock</strong> to fit your lifestyle, making it the <strong>best smart home security system</strong> on the market today.</p>
+        <!-- 分类 2：手机生态与APP -->
+        <div class="category-title">2. Mobile Ecosystems</div>
+        <div class="brand-options">
+            <div class="brand-btn" onclick="checkCompatibility('Xiaomi', this)"><span>📱</span> Xiaomi Mi Home</div>
+            <div class="brand-btn" onclick="checkCompatibility('Huawei', this)"><span>📶</span> Huawei HiLink</div>
+            <div class="brand-btn" onclick="checkCompatibility('Tuya', this)"><span>🌍</span> Tuya Smart</div>
         </div>
 
-        <div class="step" data-step="3">
-            <h3>Real-Time Alerts &amp; Monitoring</h3>
-            <p>Whenever motion is detected by the <strong>home security camera system</strong>, our AI analyzes the threat and sends an instant notification to your phone. Experience the difference of the <strong>best smart home security system</strong>.</p>
+        <!-- 分类 3：网络与路由器 -->
+        <div class="category-title">3. Network & Routers</div>
+        <div class="brand-options">
+            <div class="brand-btn" onclick="checkCompatibility('Router_Dual', this)"><span>📡</span> Dual-Band Router</div>
+            <div class="brand-btn" onclick="checkCompatibility('Router_Mesh', this)"><span>🕸️</span> Mesh Wi-Fi System</div>
+            <div class="brand-btn" onclick="checkCompatibility('Router_Old', this)"><span>📻</span> Old 2.4GHz Only</div>
+        </div>
+
+        <!-- 分类 4：其他智能单品 -->
+        <div class="category-title">4. Other Smart Devices</div>
+        <div class="brand-options">
+            <div class="brand-btn" onclick="checkCompatibility('Ring', this)"><span>🔔</span> Ring Doorbell</div>
+            <div class="brand-btn" onclick="checkCompatibility('Nest', this)"><span>🌡️</span> Nest Thermostat</div>
+            <div class="brand-btn" onclick="checkCompatibility('Philips', this)"><span>💡</span> Philips Hue</div>
+        </div>
+
+        <!-- 分类 5：传统安防或全新入门 -->
+        <div class="category-title">5. Traditional or New</div>
+        <div class="brand-options">
+            <div class="brand-btn" onclick="checkCompatibility('ADT', this)"><span>🛡️</span> Old ADT System</div>
+            <div class="brand-btn" onclick="checkCompatibility('None', this)"><span>🚫</span> Just Starting Out</div>
+        </div>
+
+        <!-- 结果显示区 -->
+        <div class="result-display" id="compat-result">
+            <div class="result-icon" id="res-icon">🔍</div>
+            <div class="result-content">
+                <div class="result-title" id="res-title"></div>
+                <div class="result-desc" id="res-desc"></div>
+            </div>
         </div>
     </div>
+
+    <!-- 原有的功能展示 -->
+    <h2 class="section-title">Core System Features</h2>
+    <div class="card-grid">
+        <div class="card">
+            <span class="card-icon">🤖</span>
+            <h3>AI Detection</h3>
+            <p>Our <strong>home security camera system</strong> distinguishes between people, pets, and cars.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">🔐</span>
+            <h3>Remote Access</h3>
+            <p>Control your <strong>smart lock</strong> from anywhere in the world using your phone.</p>
+        </div>
+        <div class="card">
+            <span class="card-icon">⚡</span>
+            <h3>Easy Setup</h3>
+            <p>We provide the <strong>smart home devices for beginners</strong> that install in minutes.</p>
+        </div>
+    </div>
+
 </div>
 
 <footer>
     Best Smart Home Security System &middot; AI Cameras &amp; Smart Locks &middot; 2024
 </footer>
+
+<script>
+    function checkCompatibility(brand, btnElement) {
+        let btns = document.querySelectorAll('.brand-btn');
+        btns.forEach(btn => btn.classList.remove('selected'));
+        btnElement.classList.add('selected');
+
+        let resultBox = document.getElementById('compat-result');
+        let resIcon = document.getElementById('res-icon');
+        let resTitle = document.getElementById('res-title');
+        let resDesc = document.getElementById('res-desc');
+
+        resultBox.className = 'result-display show';
+
+        // 极其丰富的判断逻辑
+        switch(brand) {
+            // 语音助手
+            case 'Apple':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Fully Compatible with Apple HomeKit';
+                resDesc.innerText = 'Seamlessly control your smart lock via Siri and view camera feeds on your Apple Watch.';
+                break;
+            case 'Google':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Fully Compatible with Google Home';
+                resDesc.innerText = 'Use voice commands with Google Assistant to arm the system or stream video to your Nest Hub.';
+                break;
+            case 'Amazon':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Fully Compatible with Amazon Alexa';
+                resDesc.innerText = 'Connects directly to Echo devices. Use Alexa routines to lock doors automatically at night.';
+                break;
+            case 'Samsung':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Fully Compatible with SmartThings';
+                resDesc.innerText = 'Integrates into the SmartThings ecosystem for advanced automation with your Samsung appliances.';
+                break;
+
+            // 手机生态
+            case 'Xiaomi':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Compatible with Xiaomi Mi Home';
+                resDesc.innerText = 'Our devices sync perfectly with the Mi Home app, making it the best smart home security system for Xiaomi users.';
+                break;
+            case 'Huawei':
+                resultBox.classList.add('res-warning');
+                resIcon.innerText = '⚠️';
+                resTitle.innerText = 'Partially Compatible with Huawei';
+                resDesc.innerText = 'Basic automations work via HiLink. Full AI camera features require our native app (update coming soon).';
+                break;
+            case 'Tuya':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Works with Tuya Smart';
+                resDesc.innerText = 'Devices are built on the Tuya platform, guaranteeing 100% compatibility with your existing setup.';
+                break;
+
+            // 网络与路由器
+            case 'Router_Dual':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Perfect Network Match';
+                resDesc.innerText = 'Your dual-band router is ideal. Connect the cameras to the 2.4GHz band for maximum range and stability.';
+                break;
+            case 'Router_Mesh':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Excellent Choice';
+                resDesc.innerText = 'Mesh networks are perfect for smart homes. You will experience zero dead zones for your home security camera system.';
+                break;
+            case 'Router_Old':
+                resultBox.classList.add('res-warning');
+                resIcon.innerText = '⚠️';
+                resTitle.innerText = 'Action Required';
+                resDesc.innerText = 'Your router only supports 2.4GHz. While this works, we recommend upgrading to a dual-band router for HD video streaming.';
+                break;
+
+            // 其他智能单品
+            case 'Ring':
+                resultBox.classList.add('res-warning');
+                resIcon.innerText = '⚠️';
+                resTitle.innerText = 'Rival Ecosystem Detected';
+                resDesc.innerText = 'Our system cannot directly link with Ring. However, you can run both apps in parallel, and we recommend our cameras for better AI detection.';
+                break;
+            case 'Nest':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Works Great via Google Home';
+                resDesc.innerText = 'Since Nest runs on Google Home, our system can trigger temperature changes when you arm or disarm the security system.';
+                break;
+            case 'Philips':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '✅';
+                resTitle.innerText = 'Perfect Automation Partner';
+                resDesc.innerText = 'Use our motion sensors to trigger Philips Hue lights. Flash the lights red when the security camera detects motion.';
+                break;
+
+            // 传统与新手
+            case 'ADT':
+                resultBox.classList.add('res-error');
+                resIcon.innerText = '❌';
+                resTitle.innerText = 'Not Directly Compatible';
+                resDesc.innerText = 'Old ADT hardwired systems use proprietary protocols. We recommend replacing them with our modern, contract-free smart home system.';
+                break;
+            case 'None':
+                resultBox.classList.add('res-success');
+                resIcon.innerText = '🌟';
+                resTitle.innerText = 'Great Choice for Beginners!';
+                resDesc.innerText = 'Our system includes a free central hub. As the best smart home security system for beginners, we guide you step-by-step from scratch.';
+                break;
+        }
+    }
+</script>
+
 </body>
 </html>

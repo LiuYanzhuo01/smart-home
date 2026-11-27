@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# 指引搜索引擎爬虫去读取你的站点地图
+Sitemap: https://liuyanzhuo01.github.io/smart-home/sitemap.xml
